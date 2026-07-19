@@ -1,0 +1,8 @@
+{
+  "name": "Copy of AuctionHub",
+  "description": "Premium AI-Powered Online Auction Platform with real-time simulated bidding, payments, shipment tracking, and intelligent AI assistant.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
