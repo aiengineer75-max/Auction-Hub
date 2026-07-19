@@ -1,3 +1,5 @@
+[![Live Demo](https://img.shields.io/badge/Live-Demo-success?style=for-the-badge&logo=googlechrome)](https://auctionhub-12906581724.asia-southeast1.run.app/)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge&logo=github)](https://github.com/aiengineer75-max/Auction-Hub)
 <div align="center">
 
 # 🏆 Auction Hub
