@@ -2,22 +2,47 @@
 
 # ⚔️ BidBattle
 
-### Bid Smart. Win Big.
+### AI-Powered Online Auction Platform
+
+<img src="https://readme-typing-svg.demolab.com?font=Poppins&weight=700&size=28&duration=3500&pause=1000&color=6A5ACD&center=true&vCenter=true&width=900&lines=Welcome+to+BidBattle!;Bid+Smart.+Win+Big.;AI-Powered+Online+Auction+Platform.;React+%7C+TypeScript+%7C+Express+%7C+Gemini+AI;Modern+%7C+Fast+%7C+Responsive+%7C+Secure" alt="Typing SVG" />
+
+<br>
 
 <p align="center">
-An AI-powered online auction platform that transforms the online bidding experience with secure auctions, intelligent assistance, modern UI, and seamless user interaction.
+
+<a href="https://bidbattle.ai.studio/">
+<img src="https://img.shields.io/badge/🚀%20Live%20Demo-Visit%20Website-00C853?style=for-the-badge">
+</a>
+
+<a href="https://github.com/aiengineer75-max/Bid-Battle">
+<img src="https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github">
+</a>
+
 </p>
 
 <p align="center">
 
-[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Visit_Website-success?style=for-the-badge)](https://bidbattle.ai.studio/)
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge&logo=github)](https://github.com/aiengineer75-max/Bid-Battle)
-![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript)
-![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss)
-![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express)
-![Google Gemini AI](https://img.shields.io/badge/Google-Gemini_AI-4285F4?style=for-the-badge&logo=google)
+<img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react">
+
+<img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript">
+
+<img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite">
+
+<img src="https://img.shields.io/badge/TailwindCSS-06B6D4?style=for-the-badge&logo=tailwindcss">
+
+<img src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express">
+
+<img src="https://img.shields.io/badge/Google-Gemini_AI-4285F4?style=for-the-badge&logo=google">
+
+</p>
+
+<p align="center">
+
+<img src="https://img.shields.io/github/stars/aiengineer75-max/Bid-Battle?style=social">
+
+<img src="https://img.shields.io/github/forks/aiengineer75-max/Bid-Battle?style=social">
+
+<img src="https://img.shields.io/github/license/aiengineer75-max/Bid-Battle?style=social">
 
 </p>
 
@@ -25,11 +50,13 @@ An AI-powered online auction platform that transforms the online bidding experie
 
 ---
 
-# 🌟 Overview
+# 🌟 About BidBattle
 
-**BidBattle** is a modern AI-powered online auction platform that allows users to create auctions, compete in bidding, monitor payments, track shipments, and receive AI-powered assistance.
+**BidBattle** is a modern **AI-powered Online Auction Platform** designed to provide an engaging, secure, and intelligent bidding experience.
 
-The platform combines a premium user interface with intelligent features to provide a fast, secure, and engaging auction experience.
+The platform enables users to browse auction listings, place competitive bids, create auctions, manage payments, track shipments, monitor their bidding history, and interact with an AI-powered assistant built using **Google Gemini AI**.
+
+Its clean UI, responsive design, and modular architecture make BidBattle a scalable marketplace solution built with modern web technologies.
 
 ---
 
@@ -37,11 +64,13 @@ The platform combines a premium user interface with intelligent features to prov
 
 ### 🌐 Website
 
-https://bidbattle.ai.studio/
+### https://bidbattle.ai.studio/
 
-### 💻 GitHub Repository
+---
 
-https://github.com/aiengineer75-max/Bid-Battle
+# 💻 Source Code
+
+### https://github.com/aiengineer75-max/Bid-Battle
 
 ---
 
@@ -49,101 +78,145 @@ https://github.com/aiengineer75-max/Bid-Battle
 
 ## 🔐 Authentication
 
-- User Registration
 - Secure Login
-- Protected Dashboard
+- User Registration
+- Protected Routes
 
-## 🛒 Auction Marketplace
+---
+
+## 🏷 Auctions
 
 - Browse Auctions
-- Search Items
-- View Auction Details
-- Live Bidding Workflow
+- Search Products
+- Auction Details
+- Live Bid Workflow
 - Highest Bid Tracking
+
+---
 
 ## ⚔ Auction Management
 
 - Create Auctions
 - Manage Listings
-- View Active Auctions
+- Active Auctions
+
+---
 
 ## 📊 Dashboard
 
 - User Statistics
+- Recent Activity
 - Bid History
-- Active Auctions
+- Auction Overview
+
+---
+
+## 👤 Profile
+
+- User Information
+- Profile Management
+
+---
 
 ## 💳 Payments
 
-- Payment Management
+- Payment Records
 - Transaction Overview
+
+---
 
 ## 🚚 Shipment Tracking
 
-- Shipment Status
-- Delivery Progress
+- Delivery Status
+- Shipment Progress
+
+---
 
 ## 🤖 AI Assistant
 
 Powered by **Google Gemini AI**
 
-- User Guidance
-- Auction Support
-- Smart Assistance
+- Smart User Guidance
+- Auction Recommendations
+- Interactive Chat Assistant
+
+---
 
 ## 🛠 Admin Panel
 
-- User Management
-- Auction Management
+- Manage Users
+- Manage Auctions
 - Platform Monitoring
 
 ---
 
 # 🖼 Application Pages
 
-- Home
-- Login
-- Register
-- Dashboard
-- Browse Auctions
-- Auction Details
-- Create Auction
-- My Bids
-- Payments
-- Shipments
-- AI Assistant
-- Admin Panel
+```
+🏠 Home
+
+🔐 Login
+
+📝 Register
+
+📊 Dashboard
+
+🔎 Browse Auctions
+
+📄 Auction Details
+
+➕ Create Auction
+
+⚔ My Bids
+
+👤 Profile
+
+💳 Payments
+
+🚚 Shipments
+
+🤖 AI Assistant
+
+🛠 Admin Panel
+```
 
 ---
 
 # 🛠 Technology Stack
 
 | Frontend | Backend | AI | Styling |
-|-----------|----------|----|----------|
+|----------|----------|------|------------|
 | React 19 | Express.js | Google Gemini AI | Tailwind CSS |
-| TypeScript | Node.js | Gemini API | Responsive UI |
-| Vite | REST API | AI Chatbot | Lucide Icons |
+| TypeScript | Node.js | Gemini API | Responsive Design |
+| Vite | REST API | AI Chatbot | Lucide React |
 
 ---
 
 # 📂 Project Structure
 
-```
-
+```text
 BidBattle
 │
 ├── src
-│ ├── components
-│ ├── constants
-│ ├── App.tsx
-│ └── main.tsx
+│   ├── components
+│   │
+│   ├── HomeView
+│   ├── DashboardView
+│   ├── BrowseAuctionsView
+│   ├── AuctionDetailView
+│   ├── CreateAuctionView
+│   ├── MyBidsView
+│   ├── PaymentsView
+│   ├── ShipmentsView
+│   ├── ProfileView
+│   ├── AdminPanelView
+│   ├── AIChatBot
+│   └── AuthView
 │
-├── public
 ├── assets
+├── public
 ├── package.json
-├── vite.config.ts
 └── README.md
-
 ```
 
 ---
@@ -156,7 +229,7 @@ Clone the repository
 git clone https://github.com/aiengineer75-max/Bid-Battle.git
 ```
 
-Move to the project
+Move into the project
 
 ```bash
 cd Bid-Battle
@@ -168,13 +241,13 @@ Install dependencies
 npm install
 ```
 
-Create environment file
+Create a `.env` file
 
 ```env
 GEMINI_API_KEY=YOUR_API_KEY
 ```
 
-Run the application
+Start development
 
 ```bash
 npm run dev
@@ -190,17 +263,44 @@ npm run build
 
 ---
 
-# 🔮 Future Enhancements
+# 📸 Screenshots
 
-- Real-time bidding using WebSockets
-- Email Notifications
-- Payment Gateway Integration
-- Image Uploads
-- User Reviews
-- Auction Countdown Timer
-- Wishlist
-- Mobile Application
-- Analytics Dashboard
+> Replace these placeholders with your application screenshots.
+
+```
+📷 Home Page
+
+📷 Browse Auctions
+
+📷 Auction Details
+
+📷 Dashboard
+
+📷 AI Assistant
+
+📷 Admin Panel
+
+📷 Payments
+
+📷 Profile
+```
+
+---
+
+# 🎯 Roadmap
+
+- ✅ AI Assistant
+- ✅ Dashboard
+- ✅ Profile Management
+- ✅ Payment Module
+- ✅ Shipment Tracking
+- 🔄 Real-time Live Bidding
+- 🔄 Email Notifications
+- 🔄 Payment Gateway
+- 🔄 Mobile App
+- 🔄 User Reviews
+- 🔄 Wishlist
+- 🔄 Analytics Dashboard
 
 ---
 
@@ -208,38 +308,54 @@ npm run build
 
 ## Rabia Zulfiqar
 
-**AI Engineering Student**
+🎓 AI Engineering Student
 
 University of Engineering & Technology (UET)
 
 ### Skills
 
 - Artificial Intelligence
+
 - Full Stack Web Development
+
 - React.js
+
 - TypeScript
+
 - UI/UX Design
+
+- Graphic Design
 
 ---
 
 # 🤝 Contributing
 
-Contributions are always welcome.
+Contributions are welcome!
 
-Please fork the repository and submit a Pull Request.
+Please fork the repository, create a feature branch, and submit a Pull Request.
 
 ---
 
 # 📄 License
 
-This project is licensed under the MIT License.
+Licensed under the **MIT License**.
 
 ---
 
 <div align="center">
 
-### ⭐ If you found this project helpful, don't forget to Star the repository!
+## ⭐ Support the Project
 
-Made with ❤️ using React, TypeScript, Tailwind CSS, Express.js & Google Gemini AI.
+If you enjoyed this project, please consider giving it a ⭐ on GitHub.
+
+<a href="https://github.com/aiengineer75-max/Bid-Battle">
+<img src="https://img.shields.io/badge/⭐-Star%20Repository-yellow?style=for-the-badge">
+</a>
+
+<br><br>
+
+### Made with ❤️ by Rabia Zulfiqar
+
+**React • TypeScript • Tailwind CSS • Express.js • Google Gemini AI**
 
 </div>
