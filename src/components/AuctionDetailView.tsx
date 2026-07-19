@@ -24,6 +24,8 @@ interface AuctionDetailViewProps {
   onToggleWatchlist: (id: string) => void;
   triggerConfetti?: () => void;
   username?: string;
+  userBalance?: number;
+  onNavigateToView?: (view: string) => void;
 }
 
 export default function AuctionDetailView({
@@ -32,12 +34,24 @@ export default function AuctionDetailView({
   onPlaceBid,
   onToggleWatchlist,
   triggerConfetti,
-  username = 'Rabia'
+  username = 'Rabia',
+  userBalance = 35000,
+  onNavigateToView
 }: AuctionDetailViewProps) {
   const [activeImage, setActiveImage] = useState(auction.image);
   const [bidAmount, setBidAmount] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 2, seconds: 15 }); // Fast countdown for live feel!
+  
+  // Dynamic duration seeding so different lots demonstrate different phases of the countdown
+  const [initialDuration] = useState<number>(() => {
+    const aid = String(auction.id).toLowerCase();
+    if (aid.includes('1') || aid === 'lot_1') return 58; // Starts in the sub-minute Red Zone!
+    if (aid.includes('3') || aid === 'lot_3') return 22; // Almost expired!
+    return 135; // Standard 2 min 15s countdown
+  });
+
+  const [endTime] = useState<number>(() => Date.now() + initialDuration * 1000);
+  const [msRemaining, setMsRemaining] = useState<number>(initialDuration * 1000);
   const [isExpired, setIsExpired] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [currentHighestBid, setCurrentHighestBid] = useState(auction.currentBid);
@@ -47,13 +61,13 @@ export default function AuctionDetailView({
     auction.currentBidderId === 'user_01'
   );
 
-  // 1. Real-time fast countdown timer for excitement!
+  // 1. High-Precision Real-Time Countdown Timer (Updates every 50ms for sub-minute smooth fractional seconds!)
   useEffect(() => {
-    let secondsTotal = 135; // 2 min 15s to see it countdown fast in the live simulation!
-    
     const timer = setInterval(() => {
-      if (secondsTotal <= 0) {
+      const remain = endTime - Date.now();
+      if (remain <= 0) {
         clearInterval(timer);
+        setMsRemaining(0);
         setIsExpired(true);
         // If user is high bidder on expiry, celebrate!
         if (userIsHighBidder) {
@@ -64,16 +78,11 @@ export default function AuctionDetailView({
         }
         return;
       }
-      secondsTotal--;
-      const d = Math.floor(secondsTotal / (3600 * 24));
-      const h = Math.floor((secondsTotal % (3600 * 24)) / 3600);
-      const m = Math.floor((secondsTotal % 3600) / 60);
-      const s = secondsTotal % 60;
-      setTimeLeft({ days: d, hours: h, minutes: m, seconds: s });
-    }, 1000);
+      setMsRemaining(remain);
+    }, 50);
 
     return () => clearInterval(timer);
-  }, [userIsHighBidder]);
+  }, [endTime, userIsHighBidder]);
 
   // 2. Simulated Live Rival Bidding Engine!
   // Every 8-15 seconds, a random fake bidder puts a counter-bid if active and the user is currently high bidder!
@@ -108,6 +117,14 @@ export default function AuctionDetailView({
     return () => clearInterval(interval);
   }, [userIsHighBidder, currentHighestBid, isExpired, auction]);
 
+  // Convert msRemaining to readable values
+  const secondsTotal = Math.ceil(msRemaining / 1000);
+  const d = Math.floor(secondsTotal / (3600 * 24));
+  const h = Math.floor((secondsTotal % (3600 * 24)) / 3600);
+  const m = Math.floor((secondsTotal % 3600) / 60);
+  const s = secondsTotal % 60;
+  const isRedZone = msRemaining < 60000; // Less than 60 seconds remains!
+
   const handlePlaceBidSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
@@ -122,6 +139,11 @@ export default function AuctionDetailView({
 
     if (enteredAmount < minAllowed) {
       setErrorMessage(`Your bid is too low. Minimum allowed bid is $${minAllowed.toLocaleString()}`);
+      return;
+    }
+
+    if (enteredAmount > userBalance) {
+      setErrorMessage(`Bidding Limit Exceeded: Your current BidBattle balance is $${userBalance.toLocaleString()}, but this bid requires $${enteredAmount.toLocaleString()}. Please transfer amount in your BidBattle account to proceed.`);
       return;
     }
 
@@ -339,9 +361,17 @@ export default function AuctionDetailView({
           </div>
 
           {/* Countdown & Progress Card */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 text-center space-y-4">
+          <div className={`border rounded-3xl p-5 text-center space-y-4 transition-all duration-300 ${
+            isRedZone && !isExpired
+              ? 'bg-rose-950/20 border-rose-500/40 shadow-lg shadow-rose-500/5'
+              : 'bg-slate-900 border-slate-800'
+          }`}>
             <div>
-              <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold block">Countdown Timer</span>
+              <span className={`text-[10px] uppercase tracking-wider font-semibold block ${
+                isRedZone && !isExpired ? 'text-rose-400' : 'text-slate-400'
+              }`}>
+                Countdown Timer
+              </span>
               
               {isExpired ? (
                 <span className="text-xl md:text-2xl font-display font-bold text-rose-500 block mt-2 animate-pulse">
@@ -349,19 +379,31 @@ export default function AuctionDetailView({
                 </span>
               ) : (
                 <div className="flex justify-center items-center gap-3 mt-2.5">
-                  {[
-                    { label: 'd', val: timeLeft.days },
-                    { label: 'h', val: timeLeft.hours },
-                    { label: 'm', val: timeLeft.minutes },
-                    { label: 's', val: timeLeft.seconds }
-                  ].map((unit, idx) => (
-                    <div key={idx} className="flex items-baseline gap-0.5">
-                      <span className="text-2xl md:text-3xl font-mono font-bold text-white bg-slate-900 px-2 py-1 rounded-xl border border-slate-800">
-                        {unit.val.toString().padStart(2, '0')}
+                  {isRedZone ? (
+                    <div className="flex flex-col items-center justify-center">
+                      <span className="text-3xl md:text-4xl font-mono font-black text-rose-500 tracking-tight flex items-baseline drop-shadow-[0_0_12px_rgba(239,68,68,0.2)]">
+                        <span>{(msRemaining / 1000).toFixed(1)}</span>
+                        <span className="text-lg text-rose-400 font-bold ml-0.5 font-sans">s</span>
                       </span>
-                      <span className="text-[10px] text-slate-500 uppercase font-bold font-sans">{unit.label}</span>
+                      <span className="text-[9px] text-rose-400 font-mono font-bold uppercase tracking-widest mt-1.5 flex items-center gap-1 animate-pulse">
+                        🚨 RED ZONE • LESS THAN 60 SECS 🚨
+                      </span>
                     </div>
-                  ))}
+                  ) : (
+                    [
+                      { label: 'd', val: d },
+                      { label: 'h', val: h },
+                      { label: 'm', val: m },
+                      { label: 's', val: s }
+                    ].map((unit, idx) => (
+                      <div key={idx} className="flex items-baseline gap-0.5">
+                        <span className="text-2xl md:text-3xl font-mono font-bold text-white bg-slate-950 px-2 py-1 rounded-xl border border-slate-800">
+                          {unit.val.toString().padStart(2, '0')}
+                        </span>
+                        <span className="text-[10px] text-slate-500 uppercase font-bold font-sans">{unit.label}</span>
+                      </div>
+                    ))
+                  )}
                 </div>
               )}
             </div>
@@ -369,13 +411,21 @@ export default function AuctionDetailView({
             {/* Simulated remaining progress bar */}
             {!isExpired && (
               <div className="space-y-1">
-                <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
+                <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-blue-600 to-sky-500 rounded-full transition-all duration-1000"
-                    style={{ width: `${(timeLeft.minutes * 60 + timeLeft.seconds) / 135 * 100}%` }}
+                    className={`h-full rounded-full transition-all duration-75 ${
+                      isRedZone
+                        ? 'bg-gradient-to-r from-rose-600 to-red-500 animate-pulse'
+                        : 'bg-gradient-to-r from-blue-600 to-sky-500'
+                    }`}
+                    style={{ width: `${(msRemaining / (initialDuration * 1000)) * 100}%` }}
                   />
                 </div>
-                <span className="text-[9px] text-slate-500 text-left block font-mono">Simulating real-time auction expiry...</span>
+                <span className={`text-[9px] text-left block font-mono ${
+                  isRedZone ? 'text-rose-500/80 font-bold' : 'text-slate-500'
+                }`}>
+                  {isRedZone ? 'Urgent: Concluding high-speed bidding phase!' : 'Simulating real-time auction expiry...'}
+                </span>
               </div>
             )}
           </div>
@@ -407,12 +457,25 @@ export default function AuctionDetailView({
                 
                 {/* Outbid warning feedback matches PDF description */}
                 {errorMessage && (
-                  <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl flex gap-3 text-xs text-rose-400">
-                    <AlertTriangle className="h-4.5 w-4.5 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-semibold text-rose-300">Outbid Bid Warning</p>
-                      <p className="mt-0.5 leading-normal">{errorMessage}</p>
+                  <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl flex flex-col gap-3 text-xs text-rose-400">
+                    <div className="flex gap-3">
+                      <AlertTriangle className="h-4.5 w-4.5 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-semibold text-rose-300">
+                          {errorMessage.includes('Bidding Limit Exceeded') ? 'Bidding Limit Exceeded' : 'Outbid Bid Warning'}
+                        </p>
+                        <p className="mt-0.5 leading-normal">{errorMessage}</p>
+                      </div>
                     </div>
+                    {errorMessage.includes('Bidding Limit Exceeded') && onNavigateToView && (
+                      <button
+                        type="button"
+                        onClick={() => onNavigateToView('payments')}
+                        className="w-full mt-1.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-md shadow-indigo-600/10 cursor-pointer text-center font-sans"
+                      >
+                        💸 Transfer / Top Up Funds Now
+                      </button>
+                    )}
                   </div>
                 )}
 

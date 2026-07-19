@@ -13,7 +13,8 @@ import {
   LogOut,
   Sparkles,
   ChevronDown,
-  X
+  X,
+  Users
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -48,6 +49,7 @@ export default function Sidebar({
     },
     { id: 'mybids', label: 'My Bids & Wins', icon: Award },
     { id: 'watchlist', label: 'Saved Watchlist', icon: Heart },
+    { id: 'social', label: 'Bidder Lounge', icon: Users },
     { id: 'notifications', label: 'Notifications', icon: Bell, count: unreadCount },
     { id: 'payments', label: 'Payments & Ledger', icon: CreditCard },
     { id: 'shipments', label: 'Shipment Tracking', icon: Truck },

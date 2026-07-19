@@ -7,13 +7,15 @@ interface PaymentsViewProps {
   walletBalance: number;
   onPaymentSuccess: (auctionId: string, amount: number) => void;
   transactions: Transaction[];
+  onAddFunds?: (amount: number) => void;
 }
 
 export default function PaymentsView({
   pendingAuctions,
   walletBalance,
   onPaymentSuccess,
-  transactions
+  transactions,
+  onAddFunds
 }: PaymentsViewProps) {
   const [selectedAuction, setSelectedAuction] = useState<Auction | null>(
     pendingAuctions.length > 0 ? pendingAuctions[0] : null
@@ -26,6 +28,28 @@ export default function PaymentsView({
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentDone, setPaymentDone] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // States for interactive wallet top-up / deposit funding
+  const [topUpAmount, setTopUpAmount] = useState('10000');
+  const [topUpMethod, setTopUpMethod] = useState<'card' | 'jazzcash' | 'easypaisa'>('jazzcash');
+  const [isFunding, setIsFunding] = useState(false);
+  const [fundSuccess, setFundSuccess] = useState(false);
+
+  const handleAddFundsSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const amt = Number(topUpAmount);
+    if (isNaN(amt) || amt <= 0) return;
+    
+    setIsFunding(true);
+    setTimeout(() => {
+      setIsFunding(false);
+      setFundSuccess(true);
+      if (onAddFunds) {
+        onAddFunds(amt);
+      }
+      setTimeout(() => setFundSuccess(false), 4000);
+    }, 1500);
+  };
 
   // Form Validation and submission simulation
   const handlePaymentSubmit = (e: React.FormEvent) => {
@@ -304,14 +328,94 @@ export default function PaymentsView({
           {/* Right column: Wallet overview & Ledger list */}
           <div className="lg:col-span-4 space-y-6">
             
-            {/* Wallet Overview */}
+            {/* Wallet Overview & Deposit Portal */}
             <div className="bg-[#111625] border border-slate-800/80 rounded-3xl p-5 space-y-4">
-              <h4 className="font-display font-semibold text-sm text-white">Wallet Overview</h4>
+              <h4 className="font-display font-semibold text-sm text-white flex justify-between items-center">
+                <span>Wallet Overview</span>
+                <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold font-sans">SECURE ACCREDITED</span>
+              </h4>
               <div className="p-4 bg-slate-950/60 border border-slate-800 rounded-xl">
                 <span className="text-[10px] text-slate-500 block uppercase tracking-wider font-semibold">Verified Wallet Balance</span>
                 <span className="text-xl font-mono font-bold text-emerald-400 mt-1 block">
                   ${walletBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
+              </div>
+
+              {/* Deposit Funding Form */}
+              <div className="border-t border-slate-800/60 pt-4 space-y-3.5">
+                <h5 className="text-xs font-bold text-white uppercase tracking-wider">Instant Fund Transfer</h5>
+                
+                {fundSuccess ? (
+                  <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-center text-xs text-emerald-400 animate-in zoom-in-95 duration-200">
+                    🎉 Transfer authorized successfully! Balance updated.
+                  </div>
+                ) : (
+                  <form onSubmit={handleAddFundsSubmit} className="space-y-3">
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {[
+                        { label: 'JazzCash', id: 'jazzcash' },
+                        { label: 'EasyPaisa', id: 'easypaisa' },
+                        { label: 'Card', id: 'card' }
+                      ].map((ch) => (
+                        <button
+                          type="button"
+                          key={ch.id}
+                          onClick={() => setTopUpMethod(ch.id as any)}
+                          className={`py-1.5 rounded-lg text-[9px] font-bold border transition-all cursor-pointer ${
+                            topUpMethod === ch.id
+                              ? 'bg-indigo-600/15 border-indigo-500 text-white'
+                              : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                          }`}
+                        >
+                          {ch.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[10px] text-slate-500 block">Transfer Amount (USD)</label>
+                      <div className="relative flex items-center">
+                        <span className="absolute left-3 text-slate-500 font-mono text-xs font-bold">$</span>
+                        <input
+                          type="number"
+                          value={topUpAmount}
+                          onChange={(e) => setTopUpAmount(e.target.value)}
+                          placeholder="Amount"
+                          className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl pl-6 pr-3 py-2 text-xs text-white font-mono font-bold focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex gap-1.5">
+                      {[5000, 10000, 25000].map((quick) => (
+                        <button
+                          type="button"
+                          key={quick}
+                          onClick={() => setTopUpAmount(quick.toString())}
+                          className="flex-1 py-1 bg-slate-900 border border-slate-800/80 hover:border-slate-700 rounded-lg text-[9px] font-mono font-bold text-slate-300 font-semibold cursor-pointer"
+                        >
+                          +${quick.toLocaleString()}
+                        </button>
+                      ))}
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={isFunding || !topUpAmount}
+                      className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/10 active:scale-98 cursor-pointer"
+                    >
+                      {isFunding ? (
+                        <>
+                          <RefreshCw className="h-3 w-3 animate-spin" /> Authorizing...
+                        </>
+                      ) : (
+                        <>
+                          <DollarSign className="h-3 w-3" /> Authorize Transfer
+                        </>
+                      )}
+                    </button>
+                  </form>
+                )}
               </div>
             </div>
 

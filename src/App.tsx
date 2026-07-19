@@ -22,6 +22,8 @@ import MyBidsView from './components/MyBidsView';
 import ShipmentsView from './components/ShipmentsView';
 import PaymentsView from './components/PaymentsView';
 import AdminPanelView from './components/AdminPanelView';
+import ProfileView from './components/ProfileView';
+import SocialView from './components/SocialView';
 import AIChatBot from './components/AIChatBot';
 import Confetti from './components/Confetti';
 
@@ -66,6 +68,13 @@ export default function App() {
       return localStorage.getItem('bidbattle_username') || 'Rabia';
     } catch (e) {
       return 'Rabia';
+    }
+  });
+  const [userAvatar, setUserAvatar] = useState<string>(() => {
+    try {
+      return localStorage.getItem('bidbattle_user_avatar') || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150';
+    } catch (e) {
+      return 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150';
     }
   });
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -137,6 +146,9 @@ export default function App() {
   };
 
   const handlePlaceBid = (auctionId: string, amount: number) => {
+    if (amount > walletBalance) {
+      return;
+    }
     setAuctions(prev => prev.map(auc => {
       if (auc.id === auctionId) {
         return {
@@ -282,7 +294,7 @@ export default function App() {
   };
 
   // Auth Handling
-  const handleLoginSuccess = (email: string, enteredUsername?: string) => {
+  const handleLoginSuccess = (email: string, enteredUsername?: string, avatar?: string) => {
     setIsLoggedIn(true);
     setUserEmail(email);
     
@@ -293,12 +305,15 @@ export default function App() {
     }
     
     setUsername(finalUsername);
+    const finalAvatar = avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150';
+    setUserAvatar(finalAvatar);
     setCurrentView('dashboard'); // Takes them straight to dashboard after login!
 
     try {
       localStorage.setItem('bidbattle_is_logged_in', 'true');
       localStorage.setItem('bidbattle_user_email', email);
       localStorage.setItem('bidbattle_username', finalUsername);
+      localStorage.setItem('bidbattle_user_avatar', finalAvatar);
     } catch (e) {
       // Ignore
     }
@@ -308,11 +323,13 @@ export default function App() {
     setIsLoggedIn(false);
     setUserEmail(null);
     setUsername('Rabia');
+    setUserAvatar('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150');
     setCurrentView('home');
     try {
       localStorage.removeItem('bidbattle_is_logged_in');
       localStorage.removeItem('bidbattle_user_email');
       localStorage.removeItem('bidbattle_username');
+      localStorage.removeItem('bidbattle_user_avatar');
     } catch (e) {
       // Ignore
     }
@@ -323,12 +340,33 @@ export default function App() {
     setCurrentView('auctions');
   };
 
+  const handleUpdateProfile = (updates: { username: string; avatar: string; bio: string; phone: string; address: string }) => {
+    setUsername(updates.username);
+    setUserAvatar(updates.avatar);
+    try {
+      localStorage.setItem('bidbattle_username', updates.username);
+      localStorage.setItem('bidbattle_user_avatar', updates.avatar);
+    } catch (e) {
+      // Ignore
+    }
+    const newNotif: Notification = {
+      id: `profile_update_${Date.now()}`,
+      title: 'Profile Updated',
+      message: 'Your profile settings have been successfully synchronized!',
+      type: 'shipment',
+      time: 'Just now',
+      read: false
+    };
+    setNotifications(n => [newNotif, ...n]);
+  };
+
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const currentLoggedInUser = {
     ...mockUser,
     username: username,
     email: userEmail || mockUser.email,
+    avatar: userAvatar,
     balance: walletBalance
   };
 
@@ -368,6 +406,8 @@ export default function App() {
             onToggleWatchlist={handleToggleWatchlist}
             triggerConfetti={triggerConfetti}
             username={username}
+            userBalance={walletBalance}
+            onNavigateToView={setCurrentView}
           />
         );
       case 'create':
@@ -386,6 +426,14 @@ export default function App() {
             onNavigateToView={setCurrentView}
           />
         );
+      case 'social':
+        return (
+          <SocialView
+            user={currentLoggedInUser}
+            onAddNotification={(notif) => setNotifications(prev => [notif, ...prev])}
+            onNavigateToView={setCurrentView}
+          />
+        );
       case 'shipments':
         return <ShipmentsView shipments={shipments} />;
       case 'payments':
@@ -396,6 +444,16 @@ export default function App() {
             walletBalance={walletBalance}
             onPaymentSuccess={handlePaymentSuccess}
             transactions={transactions}
+            onAddFunds={handleAddFunds}
+          />
+        );
+      case 'settings':
+      case 'profile':
+        return (
+          <ProfileView
+            user={currentLoggedInUser}
+            onUpdateProfile={handleUpdateProfile}
+            onNavigateToView={setCurrentView}
           />
         );
       case 'admin':

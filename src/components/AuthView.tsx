@@ -1,9 +1,18 @@
-import React, { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, Sparkles, CheckCircle, Smartphone, Chrome, Github, ShieldAlert } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Mail, Lock, Eye, EyeOff, Sparkles, CheckCircle, Smartphone, Chrome, Github, ShieldAlert, Camera, Upload, Image as ImageIcon } from 'lucide-react';
 import Logo from './Logo';
 
+export const presetAvatars = [
+  { id: 'av_1', name: 'Luxury Collector', url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150' },
+  { id: 'av_2', name: 'Elite Gentleman', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150' },
+  { id: 'av_3', name: 'Cyberpunk Hacker', url: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=150' },
+  { id: 'av_4', name: 'Modern Designer', url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=150' },
+  { id: 'av_5', name: 'Aviation Enthusiast', url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=150' },
+  { id: 'av_6', name: 'Abstract 3D Shape', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=150' }
+];
+
 interface AuthViewProps {
-  onLoginSuccess: (email: string, username?: string) => void;
+  onLoginSuccess: (email: string, username?: string, avatar?: string) => void;
   initialMode?: 'login' | 'signup';
 }
 
@@ -17,6 +26,9 @@ export default function AuthView({ onLoginSuccess, initialMode = 'login' }: Auth
   const [showPassword, setShowPassword] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [selectedAvatar, setSelectedAvatar] = useState(presetAvatars[0].url);
+  const [customAvatarUrl, setCustomAvatarUrl] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Simple reactive password strength score
   const getPasswordStrength = () => {
@@ -54,7 +66,7 @@ export default function AuthView({ onLoginSuccess, initialMode = 'login' }: Auth
         setValidationError('Password must be at least 6 characters.');
         return;
       }
-      onLoginSuccess(email, username);
+      onLoginSuccess(email, username, selectedAvatar);
     } else if (mode === 'login') {
       if (!email.trim()) {
         setValidationError('Please enter a username or email address.');
@@ -82,9 +94,26 @@ export default function AuthView({ onLoginSuccess, initialMode = 'login' }: Auth
     }
   };
 
+  const handleAvatarFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        setValidationError('Avatar image must be under 2MB.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          setSelectedAvatar(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSocialLogin = () => {
     // Simulated instant Google / GitHub sign-on
-    onLoginSuccess('quee007ina@gmail.com', 'Rabia');
+    onLoginSuccess('quee007ina@gmail.com', 'Rabia', selectedAvatar);
   };
 
   return (
@@ -124,17 +153,95 @@ export default function AuthView({ onLoginSuccess, initialMode = 'login' }: Auth
         {/* Input fields */}
         <form onSubmit={handleAuthSubmit} className="space-y-4">
           {mode === 'signup' && (
-            <div className="space-y-1.5">
-              <label className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">Username *</label>
-              <input
-                type="text"
-                required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="e.g. Rabia"
-                className="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none placeholder-slate-600"
-              />
-            </div>
+            <>
+              <div className="space-y-1.5">
+                <label className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">Username *</label>
+                <input
+                  type="text"
+                  required
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="e.g. Rabia"
+                  className="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none placeholder-slate-600"
+                />
+              </div>
+
+              {/* Choose or Upload Avatar Section */}
+              <div className="space-y-3 bg-slate-900/40 p-4 rounded-2xl border border-slate-800/60">
+                <label className="text-[10px] uppercase font-bold tracking-wider text-slate-300 block">Choose or Upload Avatar *</label>
+                
+                {/* Selected Avatar Preview */}
+                <div className="flex items-center gap-4">
+                  <img
+                    src={selectedAvatar}
+                    alt="Selected avatar"
+                    className="w-14 h-14 rounded-full border-2 border-blue-500 object-cover flex-shrink-0"
+                  />
+                  <div className="flex-1 space-y-1">
+                    <p className="text-[10px] text-slate-400 leading-normal">Select a premium preset or upload your own custom photo.</p>
+                    
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="flex items-center gap-1 px-2 py-1 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-[10px] font-bold transition-all cursor-pointer"
+                      >
+                        <Upload className="h-3 w-3" />
+                        Upload Photo
+                      </button>
+                      
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleAvatarFileChange}
+                        accept="image/*"
+                        className="hidden"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Presets Grid */}
+                <div className="grid grid-cols-6 gap-2 pt-1">
+                  {presetAvatars.map((av) => (
+                    <button
+                      key={av.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedAvatar(av.url);
+                        setCustomAvatarUrl('');
+                      }}
+                      className={`relative rounded-full overflow-hidden w-8 h-8 border-2 transition-all cursor-pointer ${
+                        selectedAvatar === av.url ? 'border-blue-500 scale-110 shadow-lg' : 'border-slate-800 hover:border-slate-600'
+                      }`}
+                      title={av.name}
+                    >
+                      <img src={av.url} alt={av.name} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+
+                {/* Paste custom URL input */}
+                <div className="space-y-1 pt-1">
+                  <span className="text-[9px] text-slate-500 block">Or paste any image URL:</span>
+                  <div className="relative flex items-center">
+                    <ImageIcon className="absolute left-2.5 h-3 w-3 text-slate-500" />
+                    <input
+                      type="url"
+                      value={customAvatarUrl}
+                      onChange={(e) => {
+                        setCustomAvatarUrl(e.target.value);
+                        if (e.target.value.trim()) {
+                          setSelectedAvatar(e.target.value);
+                        }
+                      }}
+                      placeholder="https://example.com/avatar.jpg"
+                      className="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-lg pl-8 pr-2 py-1.5 text-[10px] text-white focus:outline-none placeholder-slate-700"
+                    />
+                  </div>
+                </div>
+              </div>
+            </>
           )}
 
           <div className="space-y-1.5">
